@@ -1,0 +1,15 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: postgres-from-git
+  namespace: tenant-stage
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./charts/community-operator
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: tenant-root
+      version: '*'
