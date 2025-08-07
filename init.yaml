@@ -9,21 +9,17 @@ spec:
     branch: main
   timeout: 60s
   url: https://github.com/klinch0/cozy-exrta-apps.git
-
-# ---
-
-# apiVersion: kustomize.toolkit.fluxcd.io/v1
-# kind: Kustomization
-# metadata:
-#   finalizers:
-#   - finalizers.fluxcd.io
-#   name: flux-system
-#   namespace: tenant-root
-# spec:
-#   force: false
-#   interval: 10m0s
-#   path: ./system
-#   prune: true
-#   sourceRef:
-#     kind: GitRepository
-#     name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: main
+  namespace: cozy-public
+spec:
+  force: false
+  interval: 10m0s
+  path: ./
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: external-apps

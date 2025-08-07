@@ -1,0 +1,37 @@
+apiVersion: cozystack.io/v1alpha1
+kind: CozystackResourceDefinition
+metadata:
+  name: mongodb
+  namespace: cozy-system
+spec:
+  application:
+    kind: MongoDB
+    openAPISchema: |
+      {
+        "properties": {
+          "members": {
+            "default": 3,
+            "description": "Number of MongoDB members in the replica set",
+            "type": "number"
+          },
+          "name": {
+            "default": "",
+            "description": "Custom name for the MongoDB replica set. Optional.",
+            "type": "string"
+          }
+        },
+        "title": "Chart Values",
+        "type": "object"
+      }
+    plural: mongodbs
+    singular: mongodb
+  release:
+    chart:
+      name: ./apps/mongodb
+      sourceRef:
+        kind: GitRepository
+        name: external-apps
+        namespace: cozy-public
+    labels:
+      cozystack.io/ui: "true"
+    prefix: mongodb-
