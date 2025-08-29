@@ -8,7 +8,7 @@ spec:
   targetNamespace: external-mongodb-operator
   chart:
     spec:
-      chart: ./charts/community-operator/community-operator
+      chart: ./system/charts/community-operator/community-operator
       sourceRef:
         kind: GitRepository
         name: external-apps

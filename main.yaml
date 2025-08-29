@@ -20,7 +20,7 @@ metadata:
 spec:
   force: false
   interval: 10m0s
-  path: ./cozystackresourcedefinitions
+  path: ./core/cozystackresourcedefinitions
   prune: true
   sourceRef:
     kind: GitRepository
@@ -34,7 +34,7 @@ metadata:
 spec:
   force: false
   interval: 10m0s
-  path: ./marketplacepanels
+  path: ./core/marketplacepanels
   prune: true
   sourceRef:
     kind: GitRepository
