@@ -1,4 +1,4 @@
-apiVersion: front.in-cloud.io/v1alpha1
+apiVersion: dashboard.cozystack.io/v1alpha1
 kind: MarketplacePanel
 metadata:
   name: mongodb
