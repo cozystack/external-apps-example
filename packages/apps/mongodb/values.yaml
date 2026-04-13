@@ -1,9 +1,0 @@
-##
-## @section Common parameters
-##
-
-## @param {int} members=3 - Number of MongoDB members in the replica set.
-members: 3
-
-## @param {string} name - Custom name for the MongoDB replica set. Optional.
-name: ""
