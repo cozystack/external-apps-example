@@ -26,4 +26,4 @@ spec:
         kind: GitRepository
         name: external-apps
         namespace: cozy-public
-      version: '*'
+      reconcileStrategy: Revision

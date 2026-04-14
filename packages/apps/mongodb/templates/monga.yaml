@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: qwert
-data:
-  members: {{ .Values.members | quote }}

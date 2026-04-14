@@ -1,6 +1,7 @@
+---
 apiVersion: v1
 kind: Namespace
 metadata:
   labels:
     cozystack.io/system: "true"
-  name: external-mongodb-operator
+  name: external-minecraft-operator
