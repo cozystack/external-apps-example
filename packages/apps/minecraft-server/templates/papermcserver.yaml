@@ -28,9 +28,9 @@ spec:
     checkCron: {{ .Values.checkCron | quote }}
     maintenanceWindow:
       enabled: true
-      cron: "*/5 * * * *"
+      cron: "0 4 * * *"
   gracefulShutdown:
-    timeout: 30s
+    timeout: 300s
   rcon:
     enabled: true
     passwordSecret:
