@@ -21,7 +21,9 @@ spec:
   updateStrategy: latest
   instanceSelector:
     matchLabels:
-      app.kubernetes.io/instance: minecraft-survival
+      # The label value is the Helm release name of the server app:
+      # <ApplicationDefinition release.prefix> + <app name> = minecraft-server- + survival
+      app.kubernetes.io/instance: minecraft-server-survival
   endpoints:
     - name: web
       port: 8100
