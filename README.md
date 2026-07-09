@@ -50,7 +50,9 @@ spec:
   updateStrategy: latest
   instanceSelector:
     matchLabels:
-      app.kubernetes.io/instance: minecraft-survival
+      # The label value is the Helm release name of the server app:
+      # <ApplicationDefinition release.prefix> + <app name> = minecraft-server- + survival
+      app.kubernetes.io/instance: minecraft-server-survival
   endpoints:
     - name: web
       port: 8100
@@ -65,6 +67,20 @@ packages/
   core/platform/                   # Platform chart: namespaces, HelmCharts, HelmReleases, ApplicationDefinitions
   apps/minecraft-server/           # Helm chart wrapping PaperMCServer CRD
   apps/minecraft-plugin/           # Helm chart wrapping Plugin CRD
+scripts/
+  package.mk                       # Shared Makefile targets for the charts
+  update-appdef.sh                 # Syncs generated chart schemas into the ApplicationDefinitions
 examples/
   minecraft.yaml                   # Server + BlueMap plugin example
 ```
+
+## Development
+
+Chart parameter schemas and docs are generated from annotations in each chart's `values.yaml` with [cozyvalues-gen](https://github.com/cozystack/cozyvalues-gen) — the same tool the main Cozystack repository uses. After editing a chart's `values.yaml`, regenerate the derived files and commit the full diff:
+
+```bash
+make -C packages/apps/minecraft-server generate
+make -C packages/apps/minecraft-plugin generate
+```
+
+Each `generate` run rewrites the chart's `values.schema.json` and the `## Parameters` section of its `README.md`, then syncs the schema into the matching `ApplicationDefinition` (`spec.application.openAPISchema` and `spec.dashboard.keysOrder`) in `packages/core/platform/templates/cozyrds.yaml`.

@@ -1,33 +1,60 @@
 {
-  "title": "Minecraft Server",
+  "title": "Chart Values",
   "type": "object",
   "properties": {
     "updateStrategy": {
-      "description": "Update strategy for Paper version.",
+      "description": "Update strategy for the Paper server version.",
       "type": "string",
-      "enum": ["latest", "auto", "pin", "build-pin"],
-      "default": "latest"
+      "default": "latest",
+      "enum": [
+        "latest",
+        "auto",
+        "pin",
+        "build-pin"
+      ]
     },
     "version": {
-      "description": "Target Minecraft version (required for pin/build-pin).",
+      "description": "Target Minecraft version. The operator requires it for the pin and build-pin strategies.",
       "type": "string",
       "default": ""
     },
     "memoryLimit": {
       "description": "Memory limit for the server container.",
-      "type": "string",
-      "default": "2Gi"
+      "default": "2Gi",
+      "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "x-kubernetes-int-or-string": true
     },
     "cpuLimit": {
       "description": "CPU limit for the server container.",
-      "type": "string",
-      "default": "2000m"
+      "default": "2000m",
+      "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "x-kubernetes-int-or-string": true
     },
     "serviceType": {
-      "description": "Service type (LoadBalancer, NodePort, ClusterIP).",
+      "description": "Service type used to expose the server.",
       "type": "string",
-      "enum": ["LoadBalancer", "NodePort", "ClusterIP"],
-      "default": "LoadBalancer"
+      "default": "LoadBalancer",
+      "enum": [
+        "LoadBalancer",
+        "NodePort",
+        "ClusterIP"
+      ]
     },
     "backupEnabled": {
       "description": "Enable VolumeSnapshot-based backups.",
@@ -42,28 +69,13 @@
     "backupRetention": {
       "description": "Maximum number of backup snapshots to keep.",
       "type": "integer",
-      "default": 10
+      "default": 10,
+      "minimum": 1
     },
     "checkCron": {
-      "description": "Cron schedule for checking updates.",
+      "description": "Cron schedule for checking for Paper updates.",
       "type": "string",
       "default": "0 */4 * * *"
     }
-  },
-  "allOf": [
-    {
-      "if": {
-        "properties": {
-          "updateStrategy": { "enum": ["pin", "build-pin"] }
-        },
-        "required": ["updateStrategy"]
-      },
-      "then": {
-        "properties": {
-          "version": { "minLength": 1 }
-        },
-        "required": ["version"]
-      }
-    }
-  ]
+  }
 }
