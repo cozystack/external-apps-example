@@ -1,44 +1,54 @@
 {
-  "title": "Minecraft Plugin",
+  "title": "Chart Values",
   "type": "object",
   "properties": {
     "sourceType": {
       "description": "Plugin source type.",
       "type": "string",
-      "enum": ["hangar", "url"]
+      "default": "hangar",
+      "enum": [
+        "hangar",
+        "url"
+      ]
     },
     "project": {
-      "description": "Plugin project identifier on Hangar (e.g., BlueMap).",
+      "description": "Plugin project identifier on Hangar (e.g. BlueMap). The operator requires it when sourceType is hangar.",
       "type": "string",
       "default": ""
     },
     "url": {
-      "description": "Direct download URL (for sourceType: url).",
+      "description": "Direct download URL of the plugin JAR. The operator requires it when sourceType is url.",
       "type": "string",
       "default": ""
     },
     "checksum": {
-      "description": "SHA256 hash of the JAR file (for sourceType: url).",
+      "description": "Optional SHA-256 checksum (64 hex characters) of the JAR file, used with sourceType url.",
       "type": "string",
       "default": ""
     },
     "updateStrategy": {
-      "description": "Update strategy (latest, auto, pin, build-pin).",
+      "description": "Update strategy for the plugin version.",
       "type": "string",
-      "enum": ["latest", "auto", "pin", "build-pin"],
-      "default": "latest"
+      "default": "latest",
+      "enum": [
+        "latest",
+        "auto",
+        "pin",
+        "build-pin"
+      ]
     },
     "version": {
-      "description": "Target plugin version (required for pin/build-pin).",
+      "description": "Target plugin version. The operator requires it for the pin and build-pin strategies.",
       "type": "string",
       "default": ""
     },
     "instanceSelector": {
-      "description": "Label selector to match PaperMCServer instances.",
+      "description": "Selector for the servers this plugin is installed on. The label value to match is the Helm release name of the server app, `minecraft-server-\u003cname\u003e`.",
       "type": "object",
       "default": {},
       "properties": {
         "matchLabels": {
+          "description": "Labels a PaperMCServer must carry to be selected. An empty selector matches every server in the namespace.",
           "type": "object",
           "additionalProperties": {
             "type": "string"
@@ -52,70 +62,33 @@
       "default": [],
       "items": {
         "type": "object",
+        "required": [
+          "name",
+          "port"
+        ],
         "properties": {
           "name": {
             "description": "Endpoint name (DNS label).",
             "type": "string"
           },
           "port": {
-            "description": "TCP/UDP port number.",
+            "description": "Port number.",
             "type": "integer",
-            "minimum": 1,
-            "maximum": 65535
+            "maximum": 65535,
+            "minimum": 1
           },
           "protocol": {
-            "description": "Protocol (TCP, UDP, HTTP).",
+            "description": "Endpoint protocol.",
             "type": "string",
-            "enum": ["TCP", "UDP", "HTTP"],
-            "default": "TCP"
+            "default": "TCP",
+            "enum": [
+              "TCP",
+              "UDP",
+              "HTTP"
+            ]
           }
-        },
-        "required": ["name", "port"]
+        }
       }
     }
-  },
-  "allOf": [
-    {
-      "if": {
-        "properties": {
-          "sourceType": { "const": "hangar" }
-        },
-        "required": ["sourceType"]
-      },
-      "then": {
-        "properties": {
-          "project": { "minLength": 1 }
-        },
-        "required": ["project"]
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "sourceType": { "const": "url" }
-        },
-        "required": ["sourceType"]
-      },
-      "then": {
-        "properties": {
-          "url": { "minLength": 1 }
-        },
-        "required": ["url"]
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "updateStrategy": { "enum": ["pin", "build-pin"] }
-        },
-        "required": ["updateStrategy"]
-      },
-      "then": {
-        "properties": {
-          "version": { "minLength": 1 }
-        },
-        "required": ["version"]
-      }
-    }
-  ]
+  }
 }

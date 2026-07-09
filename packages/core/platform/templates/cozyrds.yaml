@@ -8,14 +8,14 @@ spec:
     kind: MinecraftServer
     plural: minecraftservers
     singular: minecraftserver
-    openAPISchema: '{"title":"Chart Values","type":"object","properties":{"updateStrategy":{"description":"Update strategy for Paper version.","type":"string","enum":["latest","auto","pin","build-pin"],"default":"latest"},"version":{"description":"Target Minecraft version (required for pin/build-pin).","type":"string","default":""},"memoryLimit":{"description":"Memory limit for the server container.","type":"string","default":"2Gi"},"cpuLimit":{"description":"CPU limit for the server container.","type":"string","default":"2000m"},"serviceType":{"description":"Service type (LoadBalancer, NodePort, ClusterIP).","type":"string","enum":["LoadBalancer","NodePort","ClusterIP"],"default":"LoadBalancer"},"backupEnabled":{"description":"Enable VolumeSnapshot-based backups.","type":"boolean","default":false},"backupSchedule":{"description":"Cron schedule for periodic backups.","type":"string","default":"0 */6 * * *"},"backupRetention":{"description":"Maximum number of backup snapshots to keep.","type":"integer","default":10},"checkCron":{"description":"Cron schedule for checking updates.","type":"string","default":"0 */4 * * *"}}}'
+    openAPISchema: '{"title":"Chart Values","type":"object","properties":{"updateStrategy":{"description":"Update strategy for the Paper server version.","type":"string","default":"latest","enum":["latest","auto","pin","build-pin"]},"version":{"description":"Target Minecraft version. The operator requires it for the pin and build-pin strategies.","type":"string","default":""},"memoryLimit":{"description":"Memory limit for the server container.","default":"2Gi","pattern":"^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$","anyOf":[{"type":"integer"},{"type":"string"}],"x-kubernetes-int-or-string":true},"cpuLimit":{"description":"CPU limit for the server container.","default":"2000m","pattern":"^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$","anyOf":[{"type":"integer"},{"type":"string"}],"x-kubernetes-int-or-string":true},"serviceType":{"description":"Service type used to expose the server.","type":"string","default":"LoadBalancer","enum":["LoadBalancer","NodePort","ClusterIP"]},"backupEnabled":{"description":"Enable VolumeSnapshot-based backups.","type":"boolean","default":false},"backupSchedule":{"description":"Cron schedule for periodic backups.","type":"string","default":"0 */6 * * *"},"backupRetention":{"description":"Maximum number of backup snapshots to keep.","type":"integer","default":10,"minimum":1},"checkCron":{"description":"Cron schedule for checking for Paper updates.","type":"string","default":"0 */4 * * *"}}}'
   release:
     chartRef:
       kind: HelmChart
       name: external-apps-minecraft-server
       namespace: cozy-public
     labels:
-      cozystack.io/ui: "true"
+      sharding.fluxcd.io/key: tenants
     prefix: minecraft-server-
   dashboard:
     category: PaaS
@@ -26,31 +26,7 @@ spec:
       - gaming
       - minecraft
     icon: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIj48cGF0aCBmaWxsPSIjN0NCMzQyIiBkPSJNNCAxMCBMMTYgNCBMMjggMTAgTDI4IDIyIEwxNiAyOCBMNCAyMiBaIi8+PHBhdGggZmlsbD0iIzU1OEIyRiIgZD0iTTE2IDQgTDI4IDEwIEwxNiAxNiBaIi8+PHBhdGggZmlsbD0iIzMzNjkxRSIgZD0iTTE2IDE2IEwyOCAxMCBMMjggMjIgTDE2IDI4IFoiLz48cGF0aCBmaWxsPSIjOEJDMzRBIiBkPSJNNCAxMCBMMTYgNCBMMTYgMTYgTDQgMjIgWiIvPjwvc3ZnPgo=
-    keysOrder:
-      - - apiVersion
-      - - appVersion
-      - - kind
-      - - metadata
-      - - metadata
-        - name
-      - - spec
-        - updateStrategy
-      - - spec
-        - version
-      - - spec
-        - memoryLimit
-      - - spec
-        - cpuLimit
-      - - spec
-        - serviceType
-      - - spec
-        - backupEnabled
-      - - spec
-        - backupSchedule
-      - - spec
-        - backupRetention
-      - - spec
-        - checkCron
+    keysOrder: [["apiVersion"], ["appVersion"], ["kind"], ["metadata"], ["metadata", "name"], ["spec", "updateStrategy"], ["spec", "version"], ["spec", "memoryLimit"], ["spec", "cpuLimit"], ["spec", "serviceType"], ["spec", "backupEnabled"], ["spec", "backupSchedule"], ["spec", "backupRetention"], ["spec", "checkCron"]]
 ---
 apiVersion: cozystack.io/v1alpha1
 kind: ApplicationDefinition
@@ -61,14 +37,14 @@ spec:
     kind: MinecraftPlugin
     plural: minecraftplugins
     singular: minecraftplugin
-    openAPISchema: '{"title":"Chart Values","type":"object","properties":{"sourceType":{"description":"Plugin source type.","type":"string","enum":["hangar","url"],"default":"hangar"},"project":{"description":"Plugin project identifier on Hangar (e.g., BlueMap).","type":"string","default":""},"url":{"description":"Direct download URL (for sourceType: url).","type":"string","default":""},"checksum":{"description":"SHA256 hash of the JAR file (for sourceType: url).","type":"string","default":""},"updateStrategy":{"description":"Update strategy (latest, auto, pin, build-pin).","type":"string","enum":["latest","auto","pin","build-pin"],"default":"latest"},"version":{"description":"Target plugin version (required for pin/build-pin).","type":"string","default":""},"instanceSelector":{"description":"Label selector to match PaperMCServer instances.","type":"object","default":{},"properties":{"matchLabels":{"type":"object","additionalProperties":{"type":"string"}}}},"endpoints":{"description":"Network endpoints exposed by this plugin.","type":"array","default":[],"items":{"type":"object","properties":{"name":{"description":"Endpoint name (DNS label).","type":"string"},"port":{"description":"TCP/UDP port number.","type":"integer","minimum":1,"maximum":65535},"protocol":{"description":"Protocol (TCP, UDP, HTTP).","type":"string","enum":["TCP","UDP","HTTP"],"default":"TCP"}},"required":["name","port"]}}}}'
+    openAPISchema: '{"title":"Chart Values","type":"object","properties":{"sourceType":{"description":"Plugin source type.","type":"string","default":"hangar","enum":["hangar","url"]},"project":{"description":"Plugin project identifier on Hangar (e.g. BlueMap). The operator requires it when sourceType is hangar.","type":"string","default":""},"url":{"description":"Direct download URL of the plugin JAR. The operator requires it when sourceType is url.","type":"string","default":""},"checksum":{"description":"Optional SHA-256 checksum (64 hex characters) of the JAR file, used with sourceType url.","type":"string","default":""},"updateStrategy":{"description":"Update strategy for the plugin version.","type":"string","default":"latest","enum":["latest","auto","pin","build-pin"]},"version":{"description":"Target plugin version. The operator requires it for the pin and build-pin strategies.","type":"string","default":""},"instanceSelector":{"description":"Selector for the servers this plugin is installed on. The label value to match is the Helm release name of the server app, `minecraft-server-<name>`.","type":"object","default":{},"properties":{"matchLabels":{"description":"Labels a PaperMCServer must carry to be selected. An empty selector matches every server in the namespace.","type":"object","additionalProperties":{"type":"string"}}}},"endpoints":{"description":"Network endpoints exposed by this plugin.","type":"array","default":[],"items":{"type":"object","required":["name","port"],"properties":{"name":{"description":"Endpoint name (DNS label).","type":"string"},"port":{"description":"Port number.","type":"integer","maximum":65535,"minimum":1},"protocol":{"description":"Endpoint protocol.","type":"string","default":"TCP","enum":["TCP","UDP","HTTP"]}}}}}}'
   release:
     chartRef:
       kind: HelmChart
       name: external-apps-minecraft-plugin
       namespace: cozy-public
     labels:
-      cozystack.io/ui: "true"
+      sharding.fluxcd.io/key: tenants
     prefix: minecraft-plugin-
   dashboard:
     category: PaaS
@@ -79,26 +55,4 @@ spec:
       - gaming
       - minecraft
     icon: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIj48cGF0aCBmaWxsPSIjRkY5ODAwIiBkPSJNMTAgNCBMMTQgNCBMMTQgOCBMMTggOCBMMTggNCBMMjIgNCBMMjIgMTIgTDI2IDEyIEwyNiAxNiBMMjIgMTYgTDIyIDI0IEwxOCAyNCBMMTggMjAgTDE0IDIwIEwxNCAyNCBMMTAgMjQgTDEwIDE2IEw2IDE2IEw2IDEyIEwxMCAxMiBaIi8+PC9zdmc+Cg==
-    keysOrder:
-      - - apiVersion
-      - - appVersion
-      - - kind
-      - - metadata
-      - - metadata
-        - name
-      - - spec
-        - sourceType
-      - - spec
-        - project
-      - - spec
-        - url
-      - - spec
-        - checksum
-      - - spec
-        - updateStrategy
-      - - spec
-        - version
-      - - spec
-        - instanceSelector
-      - - spec
-        - endpoints
+    keysOrder: [["apiVersion"], ["appVersion"], ["kind"], ["metadata"], ["metadata", "name"], ["spec", "sourceType"], ["spec", "project"], ["spec", "url"], ["spec", "checksum"], ["spec", "updateStrategy"], ["spec", "version"], ["spec", "instanceSelector"], ["spec", "endpoints"]]
